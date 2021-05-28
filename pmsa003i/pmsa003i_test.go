@@ -33,7 +33,7 @@ var (
 func TestWord(t *testing.T) {
 	data := []byte{0x00, 0x01, 0x80, 0x0A, 0x55, 0xAA, 0xFF, 0x7F}
 	result := []uint16{0x0001, 0x800A, 0x55AA, 0xFF7F}
-	for i := 0; i < len(result); i += 1 {
+	for i := 0; i < len(result); i++ {
 		if word(data, i*2) != result[i] {
 			t.Errorf("word error: i == %d", i)
 		}

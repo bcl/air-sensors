@@ -11,10 +11,6 @@ import (
 	"periph.io/x/periph/conn/i2c"
 )
 
-const (
-	PMSA003I_ADDR = 0x12
-)
-
 func checksum(data []byte) bool {
 	var cksum uint16
 	for i := 0; i < len(data)-2; i++ {
@@ -23,6 +19,7 @@ func checksum(data []byte) bool {
 	return word(data, 0x1e) == cksum
 }
 
+// Results contains the measurements from the PMSA003i
 type Results struct {
 	CfPm1    uint16 // PM1.0 in μg/m3 standard particle
 	CfPm2_5  uint16 // PM2.5 in μg/m3 standard particle
@@ -42,7 +39,7 @@ type Results struct {
 // New returns a PMSA003I device struct for communicating with the device
 //
 func New(i i2c.Bus) (*Dev, error) {
-	d := &Dev{i2c: &i2c.Dev{Bus: i, Addr: PMSA003I_ADDR}}
+	d := &Dev{i2c: &i2c.Dev{Bus: i, Addr: 0x12}}
 
 	_, err := d.ReadSensor()
 	if err != nil {
@@ -51,9 +48,10 @@ func New(i i2c.Bus) (*Dev, error) {
 	return d, nil
 }
 
+// Dev holds the connection and error details for the device
 type Dev struct {
-	i2c conn.Conn // i2c device handle for the sgp30
-	err error
+	i2c conn.Conn // i2c device handle for the pmsa003i
+	err error     //nolint
 }
 
 // Halt implements conn.Resource.
@@ -76,7 +74,7 @@ func (d *Dev) ReadSensor() (Results, error) {
 		return Results{}, fmt.Errorf("pmsa003i: Bad checksum")
 	}
 	if data[0x1d] != 0x00 {
-		return Results{}, fmt.Errorf("pmsa0031: Error code %x", data[0x1d])
+		return Results{}, fmt.Errorf("pmsa003i: Error code %x", data[0x1d])
 	}
 
 	return Results{
