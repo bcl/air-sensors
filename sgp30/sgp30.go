@@ -14,12 +14,8 @@ import (
 	"periph.io/x/periph/conn/i2c"
 )
 
-const (
-	SGP30_ADDR = 0x58
-)
-
 var (
-	CRC8_SGP30 = crc8.MakeTable(crc8.Params{
+	crc8sgp30 = crc8.MakeTable(crc8.Params{
 		Poly:   0x31,
 		Init:   0xFF,
 		RefIn:  false,
@@ -31,7 +27,7 @@ var (
 )
 
 func checkCRC8(data []byte) bool {
-	return crc8.Checksum(data[:], CRC8_SGP30) == 0x00
+	return crc8.Checksum(data[:], crc8sgp30) == 0x00
 }
 
 // New returns a SGP30 device struct for communicating with the device
@@ -42,7 +38,7 @@ func checkCRC8(data []byte) bool {
 //
 // eg. pass 30 * time.Second to save the baseline data every 30 seconds
 func New(i i2c.Bus, baselineFile string, baselineInterval time.Duration) (*Dev, error) {
-	d := &Dev{i2c: &i2c.Dev{Bus: i, Addr: SGP30_ADDR}}
+	d := &Dev{i2c: &i2c.Dev{Bus: i, Addr: 0x58}}
 	if _, err := d.GetSerialNumber(); err != nil {
 		return nil, err
 	}
@@ -63,12 +59,14 @@ func New(i i2c.Bus, baselineFile string, baselineInterval time.Duration) (*Dev, 
 	return d, nil
 }
 
+// Dev holds the connection and error details for the device
+// as well as the path to the baseline file and how often to save it.
 type Dev struct {
 	i2c              conn.Conn     // i2c device handle for the sgp30
 	baselineFile     string        // Path and filename for storing baseline values
 	baselineInterval time.Duration // How often to save the baseline data
 	lastSave         time.Time     // Last time baseline was saved
-	err              error
+	err              error         //nolint
 }
 
 // Halt implements conn.Resource.
@@ -160,7 +158,9 @@ func (d *Dev) ReadAirQuality() (uint16, uint16, error) {
 		if err != nil {
 			return 0, 0, fmt.Errorf("sgp30: Error while reading baseline: %w", err)
 		}
-		ioutil.WriteFile(d.baselineFile, baseline[:], 0644)
+		if err = ioutil.WriteFile(d.baselineFile, baseline[:], 0644); err != nil {
+			return 0, 0, err
+		}
 	}
 
 	return word(data[:], 0), word(data[:], 3), nil
@@ -201,7 +201,9 @@ func (d *Dev) SetBaseline(baseline []byte) error {
 	}
 
 	// Send InitAirQuality
-	d.StartMeasurements()
+	if err := d.StartMeasurements(); err != nil {
+		return err
+	}
 
 	// Send a 0x201e + TVOC, CO2 baseline data (2 words + CRCs)
 	data := append(append([]byte{0x20, 0x1e}, baseline[3:6]...), baseline[0:3]...)

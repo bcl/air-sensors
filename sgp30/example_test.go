@@ -32,7 +32,7 @@ func Example() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer d.Halt()
+	defer d.Halt() //nolint
 
 	sn, err := d.GetSerialNumber()
 	if err != nil {
