@@ -18,8 +18,8 @@ jobs:
       with:
         go-version: 1.15
 
-    - name: Build
-      run: go build -v ./...
+    - name: Build run-pmsa003i
+      run: go build -v ./cmd/run-pmsa003i
 
-    - name: Test
-      run: go test -v ./...
+    - name: Build run-sgp30
+      run: go build -v ./cmd/run-sgp30

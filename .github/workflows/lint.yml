@@ -1,0 +1,21 @@
+name: golint
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  test:
+    name: Run golint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: '1.15'
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Install golint
+      run: go get golang.org/x/lint/golint
+    - name: Run golint
+      run: $(go env GOPATH)/bin/golint ./...
