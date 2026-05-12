@@ -1,4 +1,4 @@
-module github.com/bcl/air-sensors
+module brianlane.com/git/air-sensors
 
 go 1.16
 
