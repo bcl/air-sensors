@@ -1,4 +1,4 @@
-module brianlane.com/git/air-sensors
+module brianlane.com/git/airsensors
 
 go 1.16
 

@@ -12,7 +12,7 @@ import (
 	"periph.io/x/periph/conn/i2c/i2creg"
 	"periph.io/x/periph/host"
 
-	"brianlane.com/git/air-sensors/sgp30"
+	"brianlane.com/git/airsensors/sgp30"
 )
 
 func Example() {
