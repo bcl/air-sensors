@@ -21,3 +21,5 @@ Organic Compunds (TVOC) in the air. You can purchase the sensor from the usual
 places, including from [AdaFruit](https://www.adafruit.com/product/3709).
 
 The datasheet can be [found here](https://cdn-learn.adafruit.com/assets/assets/000/050/058/original/Sensirion_Gas_Sensors_SGP30_Datasheet_EN.pdf).
+
+See the example code in `sgp30/example_test.go`.
