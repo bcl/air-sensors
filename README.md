@@ -3,7 +3,6 @@
 This library implements support for two air quality sensors, the PMSA003i and
 the SGP30 for use with the periph.io hardware library.
 
-
 ## PMSA003i
 
 The PMSA003i is a digital particle concentration sensor which can be used to
