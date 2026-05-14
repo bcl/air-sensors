@@ -12,6 +12,7 @@ sensor from a variety of places, including [AdaFruit](https://www.adafruit.com/p
 
 The datasheet can be [found here](https://cdn-shop.adafruit.com/product-files/4632/4505_PMSA003I_series_data_manual_English_V2.6.pdf).
 
+See the example code in `pmsa003i/example_test.go`.
 
 ## SGP30
 
